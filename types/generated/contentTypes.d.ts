@@ -362,49 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiUserProfileUserProfile extends Schema.CollectionType {
-  collectionName: 'user_profiles';
-  info: {
-    singularName: 'user-profile';
-    pluralName: 'user-profiles';
-    displayName: 'user-profile';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    keycloaksubject: Attribute.String;
-    verified: Attribute.Boolean;
-    verifiedTime: Attribute.DateTime;
-    preferredUsername: Attribute.String;
-    givenName: Attribute.String;
-    emailVerified: Attribute.Boolean;
-    familyName: Attribute.String;
-    email: Attribute.String;
-    name: Attribute.String;
-    subscriptionStatus: Attribute.String;
-    subscriptionExpiresAt: Attribute.DateTime;
-    planTier: Attribute.String;
-    gptAPIQuota: Attribute.BigInteger;
-    gptAPIQuotaRemaining: Attribute.BigInteger;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::user-profile.user-profile',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::user-profile.user-profile',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -633,6 +590,53 @@ export interface PluginContentReleasesReleaseAction
   };
 }
 
+export interface PluginI18NLocale extends Schema.CollectionType {
+  collectionName: 'i18n_locale';
+  info: {
+    singularName: 'locale';
+    pluralName: 'locales';
+    collectionName: 'locales';
+    displayName: 'Locale';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 50;
+        },
+        number
+      >;
+    code: Attribute.String & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUsersPermissionsPermission
   extends Schema.CollectionType {
   collectionName: 'up_permissions';
@@ -784,46 +788,262 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface PluginI18NLocale extends Schema.CollectionType {
-  collectionName: 'i18n_locale';
+export interface ApiGoalGoal extends Schema.CollectionType {
+  collectionName: 'goals';
   info: {
-    singularName: 'locale';
-    pluralName: 'locales';
-    collectionName: 'locales';
-    displayName: 'Locale';
-    description: '';
+    singularName: 'goal';
+    pluralName: 'goals';
+    displayName: 'goal';
   };
   options: {
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
+    draftAndPublish: true;
   };
   attributes: {
-    name: Attribute.String &
-      Attribute.SetMinMax<
-        {
-          min: 1;
-          max: 50;
-        },
-        number
-      >;
-    code: Attribute.String & Attribute.Unique;
+    title: Attribute.String;
+    description: Attribute.Text;
+    startDate: Attribute.DateTime;
+    endDate: Attribute.DateTime;
+    userProfile: Attribute.Relation<
+      'api::goal.goal',
+      'oneToOne',
+      'api::user-profile.user-profile'
+    >;
+    status: Attribute.Enumeration<['not started', 'in progress', 'completed']>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::goal.goal', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::goal.goal', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGoalTaskGoalTask extends Schema.CollectionType {
+  collectionName: 'goal_tasks';
+  info: {
+    singularName: 'goal-task';
+    pluralName: 'goal-tasks';
+    displayName: 'GoalTask';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    goal: Attribute.Relation<
+      'api::goal-task.goal-task',
+      'oneToOne',
+      'api::goal.goal'
+    >;
+    task: Attribute.Relation<
+      'api::goal-task.goal-task',
+      'oneToOne',
+      'api::task.task'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'plugin::i18n.locale',
+      'api::goal-task.goal-task',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'plugin::i18n.locale',
+      'api::goal-task.goal-task',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGptAssessmentGptAssessment extends Schema.CollectionType {
+  collectionName: 'gpt_assessments';
+  info: {
+    singularName: 'gpt-assessment';
+    pluralName: 'gpt-assessments';
+    displayName: 'gpt-assessment';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    assessment: Attribute.Text;
+    customQuestion: Attribute.Text;
+    name: Attribute.String;
+    userProfile: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToOne',
+      'api::user-profile.user-profile'
+    >;
+    goal: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToOne',
+      'api::goal.goal'
+    >;
+    tags: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToMany',
+      'api::tag.tag'
+    >;
+    tasks: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToMany',
+      'api::task.task'
+    >;
+    notes: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToMany',
+      'api::note.note'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::gpt-assessment.gpt-assessment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiNoteNote extends Schema.CollectionType {
+  collectionName: 'notes';
+  info: {
+    singularName: 'note';
+    pluralName: 'notes';
+    displayName: 'Note';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    richText: Attribute.Text;
+    recordedAt: Attribute.DateTime;
+    userProfile: Attribute.Relation<
+      'api::note.note',
+      'oneToOne',
+      'api::user-profile.user-profile'
+    >;
+    tags: Attribute.Relation<'api::note.note', 'oneToMany', 'api::tag.tag'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::note.note', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::note.note', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTagTag extends Schema.CollectionType {
+  collectionName: 'tags';
+  info: {
+    singularName: 'tag';
+    pluralName: 'tags';
+    displayName: 'tag';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    description: Attribute.Text;
+    userProfile: Attribute.Relation<
+      'api::tag.tag',
+      'oneToOne',
+      'api::user-profile.user-profile'
+    >;
+    dashboard: Attribute.Boolean;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::tag.tag', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::tag.tag', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTaskTask extends Schema.CollectionType {
+  collectionName: 'tasks';
+  info: {
+    singularName: 'task';
+    pluralName: 'tasks';
+    displayName: 'Task';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    description: Attribute.Text;
+    startDate: Attribute.DateTime;
+    closeDate: Attribute.DateTime;
+    dueDate: Attribute.DateTime;
+    status: Attribute.Enumeration<['not started', 'in progress', 'completed']>;
+    userProfile: Attribute.Relation<
+      'api::task.task',
+      'oneToOne',
+      'api::user-profile.user-profile'
+    >;
+    tags: Attribute.Relation<'api::task.task', 'oneToMany', 'api::tag.tag'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::task.task', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::task.task', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUserProfileUserProfile extends Schema.CollectionType {
+  collectionName: 'user_profiles';
+  info: {
+    singularName: 'user-profile';
+    pluralName: 'user-profiles';
+    displayName: 'user-profile';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    keycloaksubject: Attribute.String;
+    verified: Attribute.Boolean;
+    verifiedTime: Attribute.DateTime;
+    preferredUsername: Attribute.String;
+    givenName: Attribute.String;
+    emailVerified: Attribute.Boolean;
+    familyName: Attribute.String;
+    email: Attribute.String;
+    name: Attribute.String;
+    subscriptionStatus: Attribute.String;
+    subscriptionExpiresAt: Attribute.DateTime;
+    planTier: Attribute.String;
+    gptAPIQuota: Attribute.BigInteger;
+    gptAPIQuotaRemaining: Attribute.BigInteger;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-profile.user-profile',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-profile.user-profile',
       'oneToOne',
       'admin::user'
     > &
@@ -841,15 +1061,21 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
+      'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'plugin::i18n.locale': PluginI18NLocale;
+      'api::goal.goal': ApiGoalGoal;
+      'api::goal-task.goal-task': ApiGoalTaskGoalTask;
+      'api::gpt-assessment.gpt-assessment': ApiGptAssessmentGptAssessment;
+      'api::note.note': ApiNoteNote;
+      'api::tag.tag': ApiTagTag;
+      'api::task.task': ApiTaskTask;
+      'api::user-profile.user-profile': ApiUserProfileUserProfile;
     }
   }
 }
