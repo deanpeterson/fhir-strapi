@@ -1008,6 +1008,45 @@ export interface ApiTaskTask extends Schema.CollectionType {
   };
 }
 
+export interface ApiTaskNoteTaskNote extends Schema.CollectionType {
+  collectionName: 'task_notes';
+  info: {
+    singularName: 'task-note';
+    pluralName: 'task-notes';
+    displayName: 'TaskNote';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    note: Attribute.Relation<
+      'api::task-note.task-note',
+      'oneToOne',
+      'api::note.note'
+    >;
+    task: Attribute.Relation<
+      'api::task-note.task-note',
+      'oneToOne',
+      'api::task.task'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::task-note.task-note',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::task-note.task-note',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUserProfileUserProfile extends Schema.CollectionType {
   collectionName: 'user_profiles';
   info: {
@@ -1075,6 +1114,7 @@ declare module '@strapi/types' {
       'api::note.note': ApiNoteNote;
       'api::tag.tag': ApiTagTag;
       'api::task.task': ApiTaskTask;
+      'api::task-note.task-note': ApiTaskNoteTaskNote;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
     }
   }
